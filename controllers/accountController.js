@@ -11,14 +11,12 @@ export const getAccounts = async (req, res) => {
 };
 
 export const createAccount = async (req, res, next) => {
-    console.log('request body:', req.body);
     try {
-        const userId = req.user.id;
+        const userId = req.user?.id;
         const newAccount = await accountService.createAccountForUser(userId, req.body);
-        console.log(newAccount)
-        console.log('Hola')
         res.status(201).json(newAccount);
     } catch (error) {
+        console.log('Error creating account:', error);
         res.status(400).json({message: error.message});
     }
 };
