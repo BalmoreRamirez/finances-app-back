@@ -1,5 +1,5 @@
 // models/accountModel.js
-import { DataTypes } from 'sequelize';
+import {DataTypes} from 'sequelize';
 import sequelize from '../config/database.js';
 
 const Account = sequelize.define('Account', { // Modelo en singular
@@ -35,7 +35,14 @@ const Account = sequelize.define('Account', { // Modelo en singular
         field: 'currency_id'
     },
 }, {
-    tableName: 'Accounts'
+    tableName: 'Accounts',
+    timestamps: true,
+    indexes: [
+        {
+            unique: true,
+            fields: ['user_id', 'account_name']
+        }
+    ]
 });
 
 export default Account;

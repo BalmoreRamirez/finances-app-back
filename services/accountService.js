@@ -12,6 +12,12 @@ export const getAccountsByUserId = (userId) => {
     });
 };
 
+export const getAccountTypes = () => {
+    return AccountType.findAll({
+        order: [['type_name', 'ASC']]
+    });
+};
+
 export const createAccountForUser = (userId, accountData) => {
     return Account.create({ userId, ...accountData});
 };

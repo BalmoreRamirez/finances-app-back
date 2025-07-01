@@ -1,7 +1,7 @@
 // routes/accountRoutes.js
 import express from 'express';
 import * as accountController from '../controllers/accountController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import {protect} from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ const router = express.Router();
 router.use(protect);
 
 router.get('/', accountController.getAccounts);
+router.get('/types', accountController.getAccountTypes);
 router.post('/', accountController.createAccount);
 router.put('/:id', accountController.updateAccount);
 router.delete('/:id', accountController.deleteAccount);

@@ -4,7 +4,7 @@ import AccountType from './accountTypeModel.js';
 import Currency from './currencyModel.js';
 import Account from './accountModel.js';
 import TransactionType from './transactionTypeModel.js';
-import Category from './categoryModel.js';
+import Category from './transactionCategoryModel.js';
 import Transaction from './transactionModel.js';
 import InvestmentType from './investmentTypeModel.js';
 import Investment from './investmentModel.js';

@@ -35,12 +35,10 @@ const Investment = sequelize.define('Investments', {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false
         },
-        // Corresponde a 'interes' en el frontend
         interest: {
             type: DataTypes.DECIMAL(5, 2),
             defaultValue: 0.00
         },
-        // Corresponde a 'montoTotal' en el frontend
         total_amount: {
             type: DataTypes.DECIMAL(12, 2)
         },
@@ -51,7 +49,6 @@ const Investment = sequelize.define('Investments', {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        // Corresponde a 'fechaVencimiento' en el frontend
         due_date: {
             type: DataTypes.DATEONLY,
             allowNull: true
@@ -63,7 +60,7 @@ const Investment = sequelize.define('Investments', {
         }
     }, {
         tableName: 'Investments',
-        timestamps: true, // Agrega createdAt y updatedAt
+        timestamps: true,
     }
 );
 

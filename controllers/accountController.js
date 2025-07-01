@@ -38,3 +38,12 @@ export const deleteAccount = async (req, res) => {
         res.status(error.message.includes('not found') ? 404 : 500).json({message: error.message});
     }
 };
+
+export const getAccountTypes = async (req, res) => {
+    try {
+        const accountTypes = await accountService.getAccountTypes();
+        res.status(200).json(accountTypes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching account types', error: error.message });
+    }
+};
