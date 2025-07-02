@@ -7,6 +7,7 @@ import investmentRoutes from './investmentRoutes.js';
 import dashboardRoutes from './dashboardRoutes.js';
 import categoryRoutes from './categoryRoutes.js'; // Nuevo
 import transferRoutes from './transferRoutes.js';   // Nuevo
+import investmentCreditPaymentRoutes from './investmentCreditPaymentRoutes.js'; // Nuevo
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.use('/auth', authRoutes);
 router.use('/accounts', accountRoutes);
 router.use('/transactions', transactionRoutes);
 router.use('/investments', investmentRoutes);
+router.use('/investment-payments', investmentCreditPaymentRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/transfers', transferRoutes);

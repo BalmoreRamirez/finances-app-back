@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import apiRoutes from './routes/index.js';
 import sequelize from './config/database.js';
+import errorHandler from './middleware/errorMiddleware.js';
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Ruta base para la API
 app.use('/api', apiRoutes);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

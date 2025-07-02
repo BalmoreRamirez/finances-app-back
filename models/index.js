@@ -8,6 +8,7 @@ import Category from './transactionCategoryModel.js';
 import Transaction from './transactionModel.js';
 import InvestmentType from './investmentTypeModel.js';
 import Investment from './investmentModel.js';
+import InvestmentCreditPayment from './investmentCreditPaymentModel.js';
 import Transfer from './transferModel.js';
 
 // User relations
@@ -38,6 +39,9 @@ Investment.belongsTo(User, { foreignKey: 'user_id' });
 Investment.belongsTo(Account, { foreignKey: 'account_id' });
 Investment.belongsTo(InvestmentType, { foreignKey: 'investment_type_id' });
 
+// InvestmentCreditPayment relations
+InvestmentCreditPayment.belongsTo(Investment, { foreignKey: 'investment_id' }); // Relación añadida
+
 // Transfer relations
 Transfer.belongsTo(User, { foreignKey: 'user_id' });
 Transfer.belongsTo(Account, { as: 'FromAccount', foreignKey: 'from_account_id' });
@@ -45,5 +49,6 @@ Transfer.belongsTo(Account, { as: 'ToAccount', foreignKey: 'to_account_id' });
 
 export {
     User, AccountType, Currency, Account, TransactionType,
-    Category, Transaction, InvestmentType, Investment, Transfer
+    Category, Transaction, InvestmentType, Investment, Transfer,
+    InvestmentCreditPayment
 };
