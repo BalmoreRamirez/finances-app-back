@@ -7,6 +7,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AccountTypesService } from './account-types.service';
 import { CreateAccountTypeDto } from './dto/create-account-type.dto';
@@ -31,8 +32,8 @@ export class AccountTypesController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.accountTypesService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.accountTypesService.findOne(id);
   }
 
   @Patch(':id')

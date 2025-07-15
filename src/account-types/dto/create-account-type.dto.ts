@@ -10,4 +10,3 @@ export class CreateAccountTypeDto {
   @IsNotEmpty()
   description: string;
 }
-

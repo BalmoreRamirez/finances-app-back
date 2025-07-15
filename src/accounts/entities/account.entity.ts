@@ -25,6 +25,7 @@ export class Account {
     type: 'varchar',
     length: 100,
     nullable: false,
+    unique: true,
     comment: 'Nombre de la cuenta',
   })
   account_name: string;
@@ -60,4 +61,5 @@ export class Account {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
 }

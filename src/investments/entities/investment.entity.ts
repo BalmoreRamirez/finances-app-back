@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Account } from '../../accounts/entities/account.entity';
@@ -25,11 +26,18 @@ export class Investment {
   user: User;
 
   @Column({ type: 'int', nullable: false })
-  account_id: number;
+  account_origen_id: number;
 
   @ManyToOne(() => Account)
-  @JoinColumn({ name: 'account_id' })
-  account: Account;
+  @JoinColumn({ name: 'account_origen_id' })
+  account_origen: Account;
+
+  @Column({ type: 'int', nullable: false })
+  account_destino_id: number;
+
+  @ManyToOne(() => Account)
+  @JoinColumn({ name: 'account_destino_id' })
+  account_destino: Account;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
   investment_name: string;
@@ -40,12 +48,6 @@ export class Investment {
   @ManyToOne(() => InvestmentType)
   @JoinColumn({ name: 'investment_type_id' })
   investment_type: InvestmentType;
-
-  @Column({ type: 'text', nullable: true })
-  description: string;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  beneficiary: string;
 
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: false })
   invested_amount: number;
@@ -70,6 +72,13 @@ export class Investment {
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
 
   @OneToMany(() => InvestmentCreditPayment, (payment) => payment.investment)
   credit_payments: InvestmentCreditPayment[];
