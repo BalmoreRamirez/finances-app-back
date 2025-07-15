@@ -33,8 +33,12 @@ export class InvestmentsService {
     });
   }
 
-  update(id: number, updateInvestmentDto: UpdateInvestmentDto) {
-    return this.investmentRepository.update(id, updateInvestmentDto);
+  async update(id: number, updateInvestmentDto: UpdateInvestmentDto) {
+    await this.investmentRepository.update(id, updateInvestmentDto);
+    return this.investmentRepository.findOne({
+      where: { id },
+      relations: ['user', 'account', 'investment_type'],
+    });
   }
 
   remove(id: number) {
