@@ -32,7 +32,7 @@ export class AccountsService {
     return this.accountRepository.save(account);
   }
 
-  findAll() {
+  async findAll(): Promise<Account[]> {
     return this.accountRepository.find({
       relations: ['account_type'],
     });
@@ -70,12 +70,14 @@ export class AccountsService {
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ message: string }> {
     await this.findAccountById(id);
-
     try {
       const result = await this.accountRepository.delete(id);
-      return result;
+      if (result.affected === 0) {
+        throw new NotFoundException(`Cuenta con ID ${id} no encontrada`);
+      }
+      return { message: `Cuenta con ID ${id} eliminada correctamente` };
     } catch (error) {
       this.handleDeleteError(error);
     }

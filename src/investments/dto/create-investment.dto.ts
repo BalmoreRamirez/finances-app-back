@@ -11,11 +11,11 @@ import {
 export class CreateInvestmentDto {
   @IsInt()
   @IsNotEmpty()
-  user_id: number;
+  account_origen_id: number;
 
   @IsInt()
   @IsNotEmpty()
-  account_id: number;
+  account_destino_id: number;
 
   @IsString()
   @IsNotEmpty()

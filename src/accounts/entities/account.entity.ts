@@ -61,5 +61,4 @@ export class Account {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
-
 }

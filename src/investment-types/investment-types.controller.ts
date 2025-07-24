@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { InvestmentTypesService } from './investment-types.service';
 import { CreateInvestmentTypeDto } from './dto/create-investment-type.dto';
@@ -33,14 +34,14 @@ export class InvestmentTypesController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.investmentTypesService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.investmentTypesService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateInvestmentTypeDto: UpdateInvestmentTypeDto,
   ) {
     return this.investmentTypesService.update(+id, updateInvestmentTypeDto);
@@ -48,7 +49,7 @@ export class InvestmentTypesController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.investmentTypesService.remove(+id);
   }
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { InvestmentsService } from './investments.service';
 import { CreateInvestmentDto } from './dto/create-investment.dto';
@@ -32,22 +33,22 @@ export class InvestmentsController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.investmentsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.investmentsService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateInvestmentDto: UpdateInvestmentDto,
   ) {
-    return this.investmentsService.update(+id, updateInvestmentDto);
+    return this.investmentsService.update(id, updateInvestmentDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: string) {
-    return this.investmentsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.investmentsService.remove(id);
   }
 }

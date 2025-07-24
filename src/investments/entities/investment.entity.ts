@@ -67,7 +67,13 @@ export class Investment {
   @Column({ type: 'date', nullable: true })
   due_date: Date;
 
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: false,
+    default: 'activo',
+    comment: 'activo, cancelado, finalizado',
+  })
   status: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
