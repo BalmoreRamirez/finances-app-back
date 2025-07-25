@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not } from 'typeorm';
-import { TransactionCategory } from './entities/transaction_category.entity';
+import { TransactionCategory } from './entities/transaction-category.entity';
 import { CreateTransactionCategoryDto } from './dto/create-transaction_category.dto';
 import { UpdateTransactionCategoryDto } from './dto/update-transaction_category.dto';
 
