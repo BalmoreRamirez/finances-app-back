@@ -12,9 +12,6 @@ import { InvestmentType } from '../investment-types/entities/investment-type.ent
 import { CreateInvestmentDto } from './dto/create-investment.dto';
 import { UpdateInvestmentDto } from './dto/update-investment.dto';
 
-/**
- * Servicio para gestionar inversiones.
- */
 @Injectable()
 export class InvestmentsService {
   constructor(
@@ -27,43 +24,37 @@ export class InvestmentsService {
   ) {}
 
   /**
-   * Crea una nueva inversión y actualiza los balances de las cuentas.
+   * Crea una nueva inversión y descuenta el principal de la cuenta.
    */
   async create(createInvestmentDto: CreateInvestmentDto, userId: number) {
-    await this.validateAccounts(
-      createInvestmentDto.account_origen_id,
-      createInvestmentDto.account_destino_id,
-      userId,
-    );
+    await this.validateAccount(createInvestmentDto.account_id, userId);
     await this.validateInvestmentType(createInvestmentDto.investment_type_id);
 
-    const [accountOrigen, accountDestino] = await Promise.all([
-      this.accountRepository.findOne({
-        where: { id: createInvestmentDto.account_origen_id, user_id: userId },
-      }),
-      this.accountRepository.findOne({
-        where: { id: createInvestmentDto.account_destino_id, user_id: userId },
-      }),
-    ]);
+    // Obtener la cuenta y verificar fondos
+    const account = await this.accountRepository.findOne({
+      where: { id: createInvestmentDto.account_id, user_id: userId },
+    });
 
-    if ((accountOrigen?.balance ?? 0) < createInvestmentDto.invested_amount) {
+    if (!account) {
       throw new BadRequestException(
-        'La cuenta de origen no tiene fondos suficientes para realizar la inversión',
+        `Cuenta con ID ${createInvestmentDto.account_id} no encontrada o no pertenece al usuario`,
       );
     }
 
-    accountOrigen.balance =
-      Number(accountOrigen.balance) -
-      Number(createInvestmentDto.invested_amount);
-    accountDestino.balance =
-      Number(accountDestino.balance) +
-      Number(createInvestmentDto.invested_amount);
+    if (
+      (Number(account.balance) ?? 0) < Number(createInvestmentDto.principal)
+    ) {
+      throw new BadRequestException(
+        'La cuenta no tiene fondos suficientes para realizar la inversión',
+      );
+    }
 
-    await Promise.all([
-      this.accountRepository.save(accountOrigen),
-      this.accountRepository.save(accountDestino),
-    ]);
+    // Descontar el principal de la cuenta
+    account.balance =
+      Number(account.balance) - Number(createInvestmentDto.principal);
+    await this.accountRepository.save(account);
 
+    // Crear la inversión
     const investment = this.investmentRepository.create({
       ...createInvestmentDto,
       user_id: userId,
@@ -76,13 +67,7 @@ export class InvestmentsService {
    */
   findAll() {
     return this.investmentRepository.find({
-      relations: [
-        'user',
-        'account_origen',
-        'account_destino',
-        'investment_type',
-        'credit_payments',
-      ],
+      relations: ['user', 'account', 'investment_type'],
     });
   }
 
@@ -92,13 +77,7 @@ export class InvestmentsService {
   async findOne(id: number) {
     const investment = await this.investmentRepository.findOne({
       where: { id },
-      relations: [
-        'user',
-        'account_origen',
-        'account_destino',
-        'investment_type',
-        'credit_payments',
-      ],
+      relations: ['user', 'account', 'investment_type'],
     });
 
     if (!investment) {
@@ -119,18 +98,12 @@ export class InvestmentsService {
       throw new NotFoundException(`Inversión con ID ${id} no encontrada`);
     }
 
-    const origenId =
-      updateInvestmentDto.account_origen_id ??
-      existingInvestment.account_origen_id;
-    const destinoId =
-      updateInvestmentDto.account_destino_id ??
-      existingInvestment.account_destino_id;
-    await this.validateAccounts(
-      origenId,
-      destinoId,
-      existingInvestment.user_id,
-    );
+    // Validar cuenta si se actualiza
+    const accountId =
+      updateInvestmentDto.account_id ?? existingInvestment.account_id;
+    await this.validateAccount(accountId, existingInvestment.user_id);
 
+    // Validar tipo de inversión si se actualiza
     const investmentTypeId =
       updateInvestmentDto.investment_type_id ??
       existingInvestment.investment_type_id;
@@ -166,34 +139,13 @@ export class InvestmentsService {
     return investment;
   }
 
-  private async validateAccounts(
-    accountOrigenId: number,
-    accountDestinoId: number,
-    userId: number,
-  ) {
-    if (accountOrigenId === accountDestinoId) {
+  private async validateAccount(accountId: number, userId: number) {
+    const account = await this.accountRepository.findOne({
+      where: { id: accountId, user_id: userId },
+    });
+    if (!account) {
       throw new BadRequestException(
-        'La cuenta de origen y destino no pueden ser la misma',
-      );
-    }
-
-    const [accountOrigen, accountDestino] = await Promise.all([
-      this.accountRepository.findOne({
-        where: { id: accountOrigenId, user_id: userId },
-      }),
-      this.accountRepository.findOne({
-        where: { id: accountDestinoId, user_id: userId },
-      }),
-    ]);
-
-    if (!accountOrigen) {
-      throw new BadRequestException(
-        `Cuenta de origen con ID ${accountOrigenId} no encontrada o no pertenece al usuario`,
-      );
-    }
-    if (!accountDestino) {
-      throw new BadRequestException(
-        `Cuenta de destino con ID ${accountDestinoId} no encontrada o no pertenece al usuario`,
+        `Cuenta con ID ${accountId} no encontrada o no pertenece al usuario`,
       );
     }
   }

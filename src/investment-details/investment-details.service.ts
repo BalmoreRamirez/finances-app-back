@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InvestmentCreditPayment } from './entities/investment-credit-payment.entity';
-import { CreateInvestmentCreditPaymentDto } from './dto/create-investment-credit-payment.dto';
-import { UpdateInvestmentCreditPaymentDto } from './dto/update-investment-credit-payment.dto';
+import { InvestmentDetails } from './entities/investment-details.entity';
+import { CreateInvestmentDetailsDto } from './dto/create-investment-details.dto';
+import { UpdateInvestmentDetailsDto } from './dto/update-investment-details.dto';
 import { Investment } from '../investments/entities/investment.entity';
 
 @Injectable()
-export class InvestmentCreditPaymentsService {
+export class InvestmentDetailsService {
   constructor(
-    @InjectRepository(InvestmentCreditPayment)
-    private readonly paymentRepository: Repository<InvestmentCreditPayment>,
+    @InjectRepository(InvestmentDetails)
+    private readonly paymentRepository: Repository<InvestmentDetails>,
     @InjectRepository(Investment)
     private readonly investmentRepository: Repository<Investment>,
   ) {}
@@ -29,8 +29,8 @@ export class InvestmentCreditPaymentsService {
 
   async create(
     investmentId: number,
-    dto: CreateInvestmentCreditPaymentDto,
-  ): Promise<InvestmentCreditPayment> {
+    dto: CreateInvestmentDetailsDto,
+  ): Promise<InvestmentDetails> {
     await this.findInvestmentOrFail(investmentId);
     const payment = this.paymentRepository.create({
       ...dto,
@@ -41,7 +41,7 @@ export class InvestmentCreditPaymentsService {
 
   async findAllByInvestment(
     investmentId: number,
-  ): Promise<InvestmentCreditPayment[]> {
+  ): Promise<InvestmentDetails[]> {
     await this.findInvestmentOrFail(investmentId);
     return this.paymentRepository.find({
       where: { investment: { id: investmentId } },
@@ -51,7 +51,7 @@ export class InvestmentCreditPaymentsService {
   async findOne(
     investmentId: number,
     paymentId: number,
-  ): Promise<InvestmentCreditPayment> {
+  ): Promise<InvestmentDetails> {
     const payment = await this.paymentRepository.findOne({
       where: { id: paymentId, investment: { id: investmentId } },
     });
@@ -66,7 +66,7 @@ export class InvestmentCreditPaymentsService {
   async update(
     investmentId: number,
     paymentId: number,
-    dto: UpdateInvestmentCreditPaymentDto,
+    dto: UpdateInvestmentDetailsDto,
   ) {
     const payment = await this.findOne(investmentId, paymentId);
     this.paymentRepository.merge(payment, dto);

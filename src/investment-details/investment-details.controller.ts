@@ -9,20 +9,20 @@ import {
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
-import { InvestmentCreditPaymentsService } from './investment-credit-payments.service';
-import { CreateInvestmentCreditPaymentDto } from './dto/create-investment-credit-payment.dto';
-import { UpdateInvestmentCreditPaymentDto } from './dto/update-investment-credit-payment.dto';
+import { InvestmentDetailsService } from './investment-details.service';
 import { JwtAuthGuard } from '../login/jwt-auth.guard';
+import { CreateInvestmentDetailsDto } from './dto/create-investment-details.dto';
+import { UpdateInvestmentDetailsDto } from './dto/update-investment-details.dto';
 
 @Controller('investment-credit-payments')
 @UseGuards(JwtAuthGuard)
-export class InvestmentCreditPaymentsController {
-  constructor(private readonly service: InvestmentCreditPaymentsService) {}
+export class InvestmentDetailsController {
+  constructor(private readonly service: InvestmentDetailsService) {}
 
   @Post(':investmentId')
   create(
     @Param('investmentId', ParseIntPipe) investmentId: number,
-    @Body() dto: CreateInvestmentCreditPaymentDto,
+    @Body() dto: CreateInvestmentDetailsDto,
   ) {
     return this.service.create(investmentId, dto);
   }
@@ -46,7 +46,7 @@ export class InvestmentCreditPaymentsController {
   update(
     @Param('investmentId', ParseIntPipe) investmentId: number,
     @Param('paymentId', ParseIntPipe) paymentId: number,
-    @Body() dto: UpdateInvestmentCreditPaymentDto,
+    @Body() dto: UpdateInvestmentDetailsDto,
   ) {
     return this.service.update(investmentId, paymentId, dto);
   }

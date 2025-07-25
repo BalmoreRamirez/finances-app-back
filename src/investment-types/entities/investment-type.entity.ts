@@ -23,17 +23,4 @@ export class InvestmentType {
     comment: 'Description of the investment type',
   })
   description: string;
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    comment: 'Timestamp when the investment type was created',
-  })
-  createdAt: Date;
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-    comment: 'Timestamp when the investment type was last updated',
-  })
-  updatedAt: Date;
 }

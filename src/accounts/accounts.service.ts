@@ -22,7 +22,7 @@ export class AccountsService {
 
   async create(createAccountDto: CreateAccountDto, userId: number) {
     await this.validateAccountType(createAccountDto.account_type_id);
-    await this.validateUniqueAccountName(createAccountDto.account_name, userId);
+    await this.validateUniqueAccountName(createAccountDto.name, userId);
 
     const account = this.accountRepository.create({
       ...createAccountDto,
@@ -58,9 +58,9 @@ export class AccountsService {
       await this.validateAccountType(updateAccountDto.account_type_id);
     }
 
-    if (updateAccountDto.account_name) {
+    if (updateAccountDto.name) {
       await this.validateUniqueAccountNameForUpdate(
-        updateAccountDto.account_name,
+        updateAccountDto.name,
         account.user_id,
         id,
       );
@@ -110,7 +110,7 @@ export class AccountsService {
   ): Promise<void> {
     const existingAccount = await this.accountRepository.findOne({
       where: {
-        account_name: accountName,
+        name: accountName,
         user_id: userId,
       },
     });
@@ -127,7 +127,7 @@ export class AccountsService {
   ): Promise<void> {
     const existingAccount = await this.accountRepository.findOne({
       where: {
-        account_name: accountName,
+        name: accountName,
         user_id: userId,
         id: Not(excludeId),
       },

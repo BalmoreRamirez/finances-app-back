@@ -3,64 +3,52 @@ import {
   IsNotEmpty,
   IsString,
   MaxLength,
-  IsOptional,
   IsNumber,
   IsDateString,
+  IsOptional,
+  IsIn,
 } from 'class-validator';
 
 export class CreateInvestmentDto {
   @IsInt()
   @IsNotEmpty()
-  account_origen_id: number;
-
-  @IsInt()
-  @IsNotEmpty()
-  account_destino_id: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
-  investment_name: string;
+  user_id: number;
 
   @IsInt()
   @IsNotEmpty()
   investment_type_id: number;
 
   @IsString()
-  @IsOptional()
-  description?: string;
-
-  @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @MaxLength(100)
-  beneficiary?: string;
+  name: string;
 
   @IsNumber()
   @IsNotEmpty()
-  invested_amount: number;
+  principal: number;
 
   @IsNumber()
   @IsOptional()
-  interest?: number;
+  expected_return?: number;
 
-  @IsNumber()
+  @IsInt()
   @IsNotEmpty()
-  total_amount: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  profit: number;
+  account_id: number;
 
   @IsDateString()
   @IsNotEmpty()
-  investment_date: Date;
+  start_date: Date;
 
   @IsDateString()
-  @IsNotEmpty()
-  due_date: Date;
+  @IsOptional()
+  end_date?: Date;
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
+  @IsIn(['activa', 'finalizada', 'cancelada'])
   status: string;
+
+  @IsString()
+  @IsOptional()
+  notes?: string;
 }

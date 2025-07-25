@@ -20,6 +20,14 @@ export class AccountType {
   name: string;
 
   @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+    comment: 'Categoría de la cuenta',
+  })
+  category: string;
+
+  @Column({
     type: 'text',
     nullable: false,
     comment: 'Descripción del tipo de cuenta',

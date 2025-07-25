@@ -14,51 +14,33 @@ export class Account {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    type: 'int',
-    nullable: false,
-    comment: 'ID del usuario propietario de la cuenta',
-  })
+  @Column({ type: 'int', nullable: false })
   user_id: number;
 
-  @Column({
-    type: 'varchar',
-    length: 100,
-    nullable: false,
-    unique: true,
-    comment: 'Nombre de la cuenta',
-  })
-  account_name: string;
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
-  @Column({
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-    default: 0.0,
-    nullable: false,
-    comment: 'Saldo de la cuenta',
-  })
-  balance: number;
+  @Column({ type: 'int', nullable: false })
+  account_type_id: number;
 
   @ManyToOne(() => AccountType)
   @JoinColumn({ name: 'account_type_id' })
   account_type: AccountType;
 
-  @Column({
-    type: 'int',
-    nullable: false,
-    comment: 'ID del tipo de cuenta',
-  })
-  account_type_id: number;
+  @Column({ type: 'varchar', length: 100, nullable: false })
+  name: string;
+
+  @Column({ type: 'varchar', length: 10, default: 'USD' })
+  currency: string;
+
+  @Column({ type: 'numeric', precision: 14, scale: 2, default: 0 })
+  balance: number;
 
   @CreateDateColumn({
     type: 'timestamp',
+    name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',
-    comment: 'Fecha de creación',
   })
-  createdAt: Date;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  created_at: Date;
 }
