@@ -10,10 +10,6 @@ import {
 export class CreateAccountDto {
   @IsInt()
   @IsNotEmpty()
-  user_id: number;
-
-  @IsInt()
-  @IsNotEmpty()
   account_type_id: number;
 
   @IsString()

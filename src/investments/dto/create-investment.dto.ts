@@ -12,10 +12,6 @@ import {
 export class CreateInvestmentDto {
   @IsInt()
   @IsNotEmpty()
-  user_id: number;
-
-  @IsInt()
-  @IsNotEmpty()
   investment_type_id: number;
 
   @IsString()
