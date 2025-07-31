@@ -30,6 +30,9 @@ export class InvestmentsService {
     await this.validateAccount(createInvestmentDto.account_id, userId);
     await this.validateInvestmentType(createInvestmentDto.investment_type_id);
 
+    const cuentaDestinoCredito = await this.accountRepository.findOne({
+      where: { id: 3 },
+    });
     // Obtener la cuenta y verificar fondos
     const account = await this.accountRepository.findOne({
       where: { id: createInvestmentDto.account_id, user_id: userId },
@@ -54,6 +57,10 @@ export class InvestmentsService {
       Number(account.balance) - Number(createInvestmentDto.principal);
     await this.accountRepository.save(account);
 
+    if (createInvestmentDto.investment_type_id === 1) {
+      cuentaDestinoCredito.balance = createInvestmentDto.principal;
+    } else {
+    }
     // Crear la inversión
     const investment = this.investmentRepository.create({
       ...createInvestmentDto,
@@ -91,6 +98,7 @@ export class InvestmentsService {
    * Actualiza una inversión existente.
    */
   async update(id: number, updateInvestmentDto: UpdateInvestmentDto) {
+    console.log('Actualizando inversión con ID:', id);
     const existingInvestment = await this.investmentRepository.findOneBy({
       id,
     });

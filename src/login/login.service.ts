@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
@@ -15,21 +15,24 @@ export class LoginService {
     try {
       const user = await this.usersService.findByEmail(loginDto.email);
       if (!user) {
-        return { message: 'Usuario no encontrado' };
+        throw new BadRequestException(
+          `Usuario con email ${loginDto.email} no encontrado`,
+        );
       }
       const isPasswordValid = await bcrypt.compare(
         loginDto.password,
         user.password,
       );
       if (!isPasswordValid) {
-        return { message: 'Contraseña incorrecta' };
+        throw new BadRequestException('Contraseña incorrecta');
       }
       const payload = { sub: user.id, email: user.email };
       const token = this.jwtService.sign(payload);
       return { accessToken: token };
     } catch (e) {
-      console.error('Error during login:', e);
-      return { message: 'Error al iniciar sesión' };
+      if (e instanceof BadRequestException) {
+        throw e; // Re-throw the specific exception
+      }
     }
   }
 }

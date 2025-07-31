@@ -7,46 +7,86 @@ export async function seedAccounts(dataSource: DataSource) {
   const defaultAccounts = [
     {
       id: 1,
-      user_id: 1,
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Efectivo',
       account_type_id: 1,
-      name: 'Banco Agrícola',
+      description: 'Dinero físico disponible',
+      balance: 0,
       currency: 'USD',
-      balance: 1500.0,
     },
     {
       id: 2,
-      user_id: 1,
-      account_type_id: 2,
-      name: 'Efectivo en mano',
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Banco',
+      account_type_id: 1,
+      description: 'Dinero en cuentas bancarias',
+      balance: 0,
       currency: 'USD',
-      balance: 300.0,
     },
     {
       id: 3,
-      user_id: 1,
-      account_type_id: 3,
-      name: 'Prestamos a terceros',
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Créditos por cobrar',
+      account_type_id: 1,
+      description: 'Dinero que otros te deben',
+      balance: 0,
       currency: 'USD',
-      balance: 0.0,
     },
     {
       id: 4,
-      user_id: 1,
-      account_type_id: 4,
-      name: 'Sueldo mensual',
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Inventario',
+      account_type_id: 1,
+      description: 'Artículos o bienes para reventa',
+      balance: 0,
       currency: 'USD',
-      balance: 0.0,
     },
     {
       id: 5,
-      user_id: 1,
-      account_type_id: 5,
-      name: 'Ganancias de inversiones',
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Capital inicial',
+      account_type_id: 3,
+      description: 'Aporte inicial de tu dinero al sistema',
+      balance: 0,
       currency: 'USD',
-      balance: 0.0,
+    },
+    {
+      id: 6,
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Ingreso por interés',
+      account_type_id: 4,
+      description: 'Ganancias generadas por préstamos',
+      balance: 0,
+      currency: 'USD',
+    },
+    {
+      id: 7,
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Ingreso por venta',
+      account_type_id: 4,
+      description: 'Ganancias obtenidas por vender productos',
+      balance: 0,
+      currency: 'USD',
+    },
+    {
+      id: 8,
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Compra de activos',
+      account_type_id: 5,
+      description: 'Registro contable de lo que compras',
+      balance: 0,
+      currency: 'USD',
+    },
+    {
+      id: 9,
+      user_id: 1, // Assuming user_id 1 is the default user
+      name: 'Entrega de préstamo',
+      account_type_id: 5,
+      description: 'Registro de salida cuando prestas dinero',
+      balance: 0,
+      currency: 'USD',
     },
   ];
-
   for (const acc of defaultAccounts) {
     const exists = await repo.findOne({
       where: { name: acc.name, user_id: acc.user_id },

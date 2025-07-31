@@ -25,4 +25,9 @@ export class CreateAccountDto {
   @IsNumber()
   @IsOptional()
   balance?: number;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
+  description?: string;
 }

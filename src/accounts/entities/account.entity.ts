@@ -37,6 +37,9 @@ export class Account {
   @Column({ type: 'numeric', precision: 14, scale: 2, default: 0 })
   balance: number;
 
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     name: 'created_at',

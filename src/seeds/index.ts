@@ -38,14 +38,22 @@ const AppDataSource = new DataSource({
 
 async function runSeeds() {
   await AppDataSource.initialize();
-  await seedAccountTypes(AppDataSource);
-  await seedTransactionCategories(AppDataSource);
-  await seedInvestmentTypes(AppDataSource);
-  await seedTransactions(AppDataSource);
+  // 1. Usuarios
   await seedUser(AppDataSource);
+  // 2. Tipos de cuenta
+  await seedAccountTypes(AppDataSource);
+  // 3. Cuentas
   await seedAccounts(AppDataSource);
+  // 4. Categorías de transacción
+  await seedTransactionCategories(AppDataSource);
+  // 5. Tipos de inversión
+  await seedInvestmentTypes(AppDataSource);
+  // 6. Inversiones
   await seedInvestments(AppDataSource);
+  // 7. Detalles de inversión
   await seedInvestmentDetails(AppDataSource);
+  // 8. Transacciones (al final, para asegurar claves foráneas)
+  await seedTransactions(AppDataSource);
   await AppDataSource.destroy();
 }
 
