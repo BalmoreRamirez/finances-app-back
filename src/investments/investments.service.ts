@@ -21,46 +21,38 @@ export class InvestmentsService {
     private readonly accountRepository: Repository<Account>,
     @InjectRepository(InvestmentType)
     private readonly investmentTypeRepository: Repository<InvestmentType>,
-  ) {}
+  ) { }
 
   /**
-   * Crea una nueva inversión y descuenta el principal de la cuenta.
+   * Crea una nueva inversión y realiza los movimientos contables correspondientes.
    */
   async create(createInvestmentDto: CreateInvestmentDto, userId: number) {
     await this.validateAccount(createInvestmentDto.account_id, userId);
     await this.validateInvestmentType(createInvestmentDto.investment_type_id);
 
-    const cuentaDestinoCredito = await this.accountRepository.findOne({
-      where: { id: 3 },
-    });
-    // Obtener la cuenta y verificar fondos
-    const account = await this.accountRepository.findOne({
-      where: { id: createInvestmentDto.account_id, user_id: userId },
+    // Obtener la cuenta de Capital inicial (ID: 5)
+    const capitalInicialAccount = await this.accountRepository.findOne({
+      where: { id: 5, user_id: userId },
     });
 
-    if (!account) {
+    if (!capitalInicialAccount) {
       throw new BadRequestException(
-        `Cuenta con ID ${createInvestmentDto.account_id} no encontrada o no pertenece al usuario`,
+        'No se encontró la cuenta de Capital inicial'
       );
     }
 
+    // Verificar fondos en Capital inicial
     if (
-      (Number(account.balance) ?? 0) < Number(createInvestmentDto.principal)
+      (Number(capitalInicialAccount.balance) ?? 0) < Number(createInvestmentDto.principal)
     ) {
       throw new BadRequestException(
-        'La cuenta no tiene fondos suficientes para realizar la inversión',
+        'El Capital inicial no tiene fondos suficientes para realizar la inversión'
       );
     }
 
-    // Descontar el principal de la cuenta
-    account.balance =
-      Number(account.balance) - Number(createInvestmentDto.principal);
-    await this.accountRepository.save(account);
+    // Realizar movimientos contables según el tipo de inversión
+    await this.processInvestmentCreation(createInvestmentDto, userId, capitalInicialAccount);
 
-    if (createInvestmentDto.investment_type_id === 1) {
-      cuentaDestinoCredito.balance = createInvestmentDto.principal;
-    } else {
-    }
     // Crear la inversión
     const investment = this.investmentRepository.create({
       ...createInvestmentDto,
@@ -95,7 +87,7 @@ export class InvestmentsService {
   }
 
   /**
-   * Actualiza una inversión existente.
+   * Actualiza una inversión existente y maneja cambios de estado.
    */
   async update(id: number, updateInvestmentDto: UpdateInvestmentDto) {
     console.log('Actualizando inversión con ID:', id);
@@ -116,6 +108,11 @@ export class InvestmentsService {
       updateInvestmentDto.investment_type_id ??
       existingInvestment.investment_type_id;
     await this.validateInvestmentType(investmentTypeId);
+
+    // Verificar si hay cambio de estado a "finalizada"
+    if (updateInvestmentDto.status === 'finalizada' && existingInvestment.status !== 'finalizada') {
+      await this.processInvestmentCompletion(existingInvestment);
+    }
 
     await this.investmentRepository.update(id, updateInvestmentDto);
     return this.findOne(id);
@@ -181,5 +178,136 @@ export class InvestmentsService {
       );
     }
     throw new BadRequestException('Error al eliminar la inversión');
+  }
+
+  /**
+   * Procesa los movimientos contables al crear una inversión.
+   */
+  private async processInvestmentCreation(
+    createInvestmentDto: CreateInvestmentDto,
+    userId: number,
+    capitalInicialAccount: Account
+  ) {
+    const principal = Number(createInvestmentDto.principal);
+
+    // Descontar del Capital inicial
+    capitalInicialAccount.balance = Number(capitalInicialAccount.balance) - principal;
+    await this.accountRepository.save(capitalInicialAccount);
+
+    if (createInvestmentDto.investment_type_id === 1) {
+      // Tipo Crédito: Sumar a "Entrega de préstamo" (ID: 9)
+      const entregaPrestamoAccount = await this.accountRepository.findOne({
+        where: { id: 9, user_id: userId },
+      });
+
+      if (!entregaPrestamoAccount) {
+        throw new BadRequestException('No se encontró la cuenta de Entrega de préstamo');
+      }
+
+      entregaPrestamoAccount.balance = Number(entregaPrestamoAccount.balance) + principal;
+      await this.accountRepository.save(entregaPrestamoAccount);
+
+    } else if (createInvestmentDto.investment_type_id === 2) {
+      // Tipo Compra: Sumar a "Compra de activos" (ID: 8)
+      const compraActivosAccount = await this.accountRepository.findOne({
+        where: { id: 8, user_id: userId },
+      });
+
+      if (!compraActivosAccount) {
+        throw new BadRequestException('No se encontró la cuenta de Compra de activos');
+      }
+
+      compraActivosAccount.balance = Number(compraActivosAccount.balance) + principal;
+      await this.accountRepository.save(compraActivosAccount);
+    }
+  }
+
+  /**
+   * Procesa los movimientos contables al finalizar una inversión.
+   */
+  private async processInvestmentCompletion(investment: Investment) {
+    const userId = investment.user_id;
+    const principal = Number(investment.principal);
+    const expectedReturn = Number(investment.expected_return);
+    // La ganancia es simplemente el expected_return (que representa la ganancia neta)
+    const ganancia = expectedReturn;
+
+    // Obtener la cuenta de Capital inicial
+    const capitalInicialAccount = await this.accountRepository.findOne({
+      where: { id: 5, user_id: userId },
+    });
+
+    if (!capitalInicialAccount) {
+      throw new BadRequestException('No se encontró la cuenta de Capital inicial');
+    }
+
+    // Retornar el capital principal al Capital inicial
+    capitalInicialAccount.balance = Number(capitalInicialAccount.balance) + principal;
+    await this.accountRepository.save(capitalInicialAccount);
+
+    if (investment.investment_type_id === 1) {
+      // Tipo Crédito: Restar de "Entrega de préstamo" y agregar ganancia a "Ingreso por interés"
+      const entregaPrestamoAccount = await this.accountRepository.findOne({
+        where: { id: 9, user_id: userId },
+      });
+
+      if (!entregaPrestamoAccount) {
+        throw new BadRequestException('No se encontró la cuenta de Entrega de préstamo');
+      }
+
+      // Restar el capital de Entrega de préstamo
+      entregaPrestamoAccount.balance = Number(entregaPrestamoAccount.balance) - principal;
+      await this.accountRepository.save(entregaPrestamoAccount);
+
+      // Agregar ganancia a Ingreso por interés (si hay ganancia)
+      if (ganancia > 0) {
+        const ingresoInteresAccount = await this.accountRepository.findOne({
+          where: { id: 6, user_id: userId },
+        });
+
+        if (!ingresoInteresAccount) {
+          throw new BadRequestException('No se encontró la cuenta de Ingreso por interés');
+        }
+
+        ingresoInteresAccount.balance = Number(ingresoInteresAccount.balance) + ganancia;
+        await this.accountRepository.save(ingresoInteresAccount);
+
+        console.log(`Ganancia de ${ganancia} registrada en Ingreso por interés`);
+      } else {
+        console.log('No hay ganancia positiva para registrar');
+      }
+
+    } else if (investment.investment_type_id === 2) {
+      // Tipo Compra: Restar de "Compra de activos" y agregar ganancia a "Ingreso por venta"
+      const compraActivosAccount = await this.accountRepository.findOne({
+        where: { id: 8, user_id: userId },
+      });
+
+      if (!compraActivosAccount) {
+        throw new BadRequestException('No se encontró la cuenta de Compra de activos');
+      }
+
+      // Restar el capital de Compra de activos
+      compraActivosAccount.balance = Number(compraActivosAccount.balance) - principal;
+      await this.accountRepository.save(compraActivosAccount);
+
+      // Agregar ganancia a Ingreso por venta (si hay ganancia)
+      if (ganancia > 0) {
+        const ingresoVentaAccount = await this.accountRepository.findOne({
+          where: { id: 7, user_id: userId },
+        });
+
+        if (!ingresoVentaAccount) {
+          throw new BadRequestException('No se encontró la cuenta de Ingreso por venta');
+        }
+
+        ingresoVentaAccount.balance = Number(ingresoVentaAccount.balance) + ganancia;
+        await this.accountRepository.save(ingresoVentaAccount);
+
+        console.log(`Ganancia de ${ganancia} registrada en Ingreso por venta`);
+      } else {
+        console.log('No hay ganancia positiva para registrar');
+      }
+    }
   }
 }

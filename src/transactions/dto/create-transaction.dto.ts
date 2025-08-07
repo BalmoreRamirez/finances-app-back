@@ -9,8 +9,6 @@ import {
 } from 'class-validator';
 
 export class CreateTransactionDto {
-  @IsInt()
-  user_id: number;
 
   @IsInt()
   account_id: number;

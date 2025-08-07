@@ -11,7 +11,6 @@ const config: TypeOrmModuleOptions = {
   password: process.env.TYPEORM_PASSWORD,
   database: process.env.TYPEORM_DATABASE,
   autoLoadEntities: true,
-  synchronize: true, // ¡Solo para desarrollo!
+  synchronize: true,
 };
-
 export default config;

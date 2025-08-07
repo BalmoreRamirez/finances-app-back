@@ -7,18 +7,22 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { JwtAuthGuard } from '../login/jwt-auth.guard';
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  @UseGuards(JwtAuthGuard)
+  create(@Request() req, @Body() createTransactionDto: CreateTransactionDto) {
+    return this.transactionsService.create(createTransactionDto, req.user.userId);
   }
 
   @Get()
