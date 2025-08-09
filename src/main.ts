@@ -10,12 +10,20 @@ async function bootstrap() {
     credentials: true,
   });
 
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
     }),
   );
+app.use('/',(req, res, next) => {
+  if (req.method === 'GET' && req.url === '/') {
+    res.json({ message: 'Hello World!' });
+  } else {
+    next();
+  }
+})
 
   await app.listen(process.env.PORT || 3000);
 }
