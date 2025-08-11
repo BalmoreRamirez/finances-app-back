@@ -37,26 +37,63 @@ const AppDataSource = new DataSource({
 });
 
 async function runSeeds() {
-  await AppDataSource.initialize();
-  // 1. Usuarios
-  await seedUser(AppDataSource);
-  // 2. Tipos de cuenta
-  await seedAccountTypes(AppDataSource);
-  // 3. Cuentas
-  await seedAccounts(AppDataSource);
-  // 4. Categorías de transacción
-  await seedTransactionCategories(AppDataSource);
-  // 5. Tipos de inversión
-  await seedInvestmentTypes(AppDataSource);
-  // 6. Inversiones
-  await seedInvestments(AppDataSource);
-  // 7. Detalles de inversión
-  await seedInvestmentDetails(AppDataSource);
-  // 8. Transacciones (al final, para asegurar claves foráneas)
-  await seedTransactions(AppDataSource);
-  await AppDataSource.destroy();
+  console.log('🌱 Iniciando seeders para producción...');
+  
+  try {
+    await AppDataSource.initialize();
+    console.log('✅ Conexión a base de datos establecida');
+    
+    // 1. Usuarios
+    console.log('👤 Creando usuarios...');
+    await seedUser(AppDataSource);
+    
+    // 2. Tipos de cuenta
+    console.log('📊 Insertando tipos de cuenta...');
+    await seedAccountTypes(AppDataSource);
+    
+    // 3. Cuentas
+    console.log('🏦 Creando cuentas...');
+    await seedAccounts(AppDataSource);
+    
+    // 4. Categorías de transacción
+    console.log('🏷️ Insertando categorías de transacción...');
+    await seedTransactionCategories(AppDataSource);
+    
+    // 5. Tipos de inversión
+    console.log('💰 Insertando tipos de inversión...');
+    await seedInvestmentTypes(AppDataSource);
+    
+    // 6. Inversiones
+    console.log('📈 Creando inversiones...');
+    await seedInvestments(AppDataSource);
+    
+    // 7. Detalles de inversión
+    console.log('📋 Insertando detalles de inversión...');
+    await seedInvestmentDetails(AppDataSource);
+    
+    // 8. Transacciones (al final, para asegurar claves foráneas)
+    console.log('💳 Creando transacciones...');
+    await seedTransactions(AppDataSource);
+    
+    console.log('✅ Todos los seeders ejecutados exitosamente');
+    
+  } catch (error) {
+    console.error('❌ Error ejecutando seeders:', error);
+    throw error;
+  } finally {
+    await AppDataSource.destroy();
+  }
 }
 
-runSeeds().then(() => {
-  console.log('Database seeding completed successfully.');
-});
+// Solo ejecutar si es llamado directamente
+if (require.main === module) {
+  runSeeds()
+    .then(() => {
+      console.log('🎉 Database seeding completed successfully.');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('💥 Error fatal en seeders:', error);
+      process.exit(1);
+    });
+}
