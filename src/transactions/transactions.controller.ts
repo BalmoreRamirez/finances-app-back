@@ -36,15 +36,18 @@ export class TransactionsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(
+    @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+    return this.transactionsService.update(id, updateTransactionDto, req.user.userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  remove(@Request() req, @Param('id') id: string) {
+    return this.transactionsService.remove(+id, req.user.userId);
   }
 }
