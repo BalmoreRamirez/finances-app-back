@@ -9,23 +9,25 @@ import {
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AccountTypesService } from './account-types.service';
 import { CreateAccountTypeDto } from './dto/create-account-type.dto';
 import { UpdateAccountTypeDto } from './dto/update-account-type.dto';
 import { JwtAuthGuard } from '../login/jwt-auth.guard';
 
+@ApiTags('account-types')
 @Controller('account-types')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth')
 export class AccountTypesController {
   constructor(private readonly accountTypesService: AccountTypesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   create(@Body() createAccountTypeDto: CreateAccountTypeDto) {
     return this.accountTypesService.create(createAccountTypeDto);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.accountTypesService.findAll();
   }

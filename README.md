@@ -1,60 +1,215 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Finances App Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para la gestión de finanzas personales desarrollada con NestJS, TypeORM y PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Características
 
-## Description
+- ✅ **Autenticación JWT** - Sistema de login seguro
+- ✅ **Gestión de Usuarios** - Registro y administración de usuarios
+- ✅ **Cuentas Financieras** - Diferentes tipos de cuentas (Activo, Pasivo, Patrimonio, Ingreso, Egreso)
+- ✅ **Transacciones** - Registro de ingresos y gastos con categorías
+- ✅ **Inversiones** - Gestión de inversiones y préstamos
+- ✅ **Documentación API** - Swagger/OpenAPI integrado
+- ✅ **Base de Datos** - PostgreSQL con TypeORM
+- ✅ **Validación** - Validación automática con class-validator
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📖 Documentación API
 
-## Project setup
+La documentación completa de la API está disponible en **Swagger UI**:
 
+**🔗 [http://localhost:3001/api](http://localhost:3001/api)**
+
+### Características de Swagger:
+- 📋 Documentación completa de todos los endpoints
+- 🔐 Autenticación JWT integrada
+- 🧪 Pruebas interactivas de la API
+- 📝 Esquemas de datos detallados
+- 🏷️ Organización por módulos con tags
+
+### Cómo usar la autenticación en Swagger:
+1. Hacer login en `/login` para obtener el token JWT
+2. Copiar el `accessToken` de la respuesta
+3. Hacer clic en el botón **"Authorize"** en Swagger
+4. Pegar el token (sin "Bearer ")
+5. ¡Listo! Ya puedes probar endpoints protegidos
+
+## 🚀 Configuración e Instalación
+
+### Prerrequisitos
+- Node.js 18+ 
+- PostgreSQL 12+
+- npm o yarn
+
+### 1. Clonar el repositorio
 ```bash
-$ npm install
+git clone [repository-url]
+cd finances-app-back
 ```
 
-## Compile and run the project
-
+### 2. Instalar dependencias
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Configurar variables de entorno
+Copia `.env.example` a `.env` y configura tus valores:
 
 ```bash
-# unit tests
-$ npm run test
+cp .env.example .env
+```
 
-# e2e tests
-$ npm run test:e2e
+Variables principales:
+```env
+# Base de Datos
+TYPEORM_HOST=localhost
+TYPEORM_PORT=5432
+TYPEORM_USERNAME=tu_usuario
+TYPEORM_PASSWORD=tu_password
+TYPEORM_DATABASE=finances_app
 
-# test coverage
+# JWT
+JWT_SECRET=tu-clave-secreta-super-segura
+JWT_EXPIRES_IN=1d
+
+# Servidor
+PORT=3001
+NODE_ENV=development
+
+# CORS
+CORS_ORIGIN=http://localhost:3000
+```
+
+### 4. Configurar la base de datos
+```bash
+# Crear la base de datos en PostgreSQL
+createdb finances_app
+
+# Ejecutar seeds (datos iniciales)
+npm run seed
+```
+
+### 5. Ejecutar la aplicación
+```bash
+# Desarrollo (con watch mode)
+npm run start:dev
+
+# Producción
+npm run start:prod
+```
+
+La aplicación estará disponible en:
+- **API**: http://localhost:3001
+- **Swagger**: http://localhost:3001/api
+
+## 🗄️ Estructura de la Base de Datos
+
+### Entidades principales:
+- **users** - Usuarios del sistema
+- **account_types** - Tipos de cuenta (Activo, Pasivo, etc.)
+- **accounts** - Cuentas financieras del usuario
+- **transaction_categories** - Categorías de transacciones
+- **transactions** - Transacciones financieras
+- **investment_types** - Tipos de inversión
+- **investments** - Inversiones realizadas
+- **investment_details** - Detalles y pagos de inversiones
+
+## 📚 Endpoints Principales
+
+### 🔐 Autenticación
+- `POST /login` - Iniciar sesión
+
+### 👥 Usuarios  
+- `POST /users` - Registrar usuario
+- `GET /users` - Listar usuarios
+- `GET /users/:id` - Obtener usuario
+- `PATCH /users/:id` - Actualizar usuario
+- `DELETE /users/:id` - Eliminar usuario
+
+### 💳 Cuentas
+- `POST /accounts` - Crear cuenta
+- `GET /accounts` - Listar cuentas
+- `GET /accounts/:id` - Obtener cuenta
+- `PATCH /accounts/:id` - Actualizar cuenta
+- `DELETE /accounts/:id` - Eliminar cuenta
+
+### 💰 Transacciones
+- `POST /transactions` - Crear transacción
+- `GET /transactions` - Listar transacciones
+- `GET /transactions/:id` - Obtener transacción
+- `PATCH /transactions/:id` - Actualizar transacción
+- `DELETE /transactions/:id` - Eliminar transacción
+
+### 📈 Inversiones
+- `POST /investments` - Crear inversión
+- `GET /investments` - Listar inversiones
+- `GET /investments/:id` - Obtener inversión
+- `PATCH /investments/:id` - Actualizar inversión
+- `DELETE /investments/:id` - Eliminar inversión
+
+### 💸 Detalles de Inversión
+- `POST /investment-credit-payments/:investmentId` - Crear pago
+- `GET /investment-credit-payments/:investmentId` - Listar pagos
+- `GET /investment-credit-payments/:investmentId/:paymentId` - Obtener pago
+- `PATCH /investment-credit-payments/:investmentId/:paymentId` - Actualizar pago
+- `DELETE /investment-credit-payments/:investmentId/:paymentId` - Eliminar pago
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Framework**: NestJS 10
+- **Base de Datos**: PostgreSQL + TypeORM
+- **Autenticación**: JWT + Passport
+- **Validación**: class-validator + class-transformer
+- **Documentación**: Swagger/OpenAPI
+- **Lenguaje**: TypeScript
+
+## 🧪 Testing
+
+```bash
+# Tests unitarios
+npm run test
+
+# Tests e2e
+npm run test:e2e
+
+# Cobertura de código
+npm run test:cov
+```
+
+## 📝 Scripts Disponibles
+
+```bash
+# Desarrollo
+npm run start:dev     # Inicia en modo desarrollo con watch
+
+# Construcción
+npm run build         # Compila el proyecto
+
+# Producción  
+npm run start:prod    # Inicia en modo producción
+
+# Base de datos
+npm run seed          # Ejecuta seeds
+
+# Linting y formato
+npm run lint          # Ejecuta ESLint
+npm run format        # Formatea código con Prettier
+```
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+**¡Desarrollado con ❤️ usando NestJS!**
 $ npm run test:cov
 ```
 

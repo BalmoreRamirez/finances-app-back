@@ -11,8 +11,8 @@ import { PassportModule } from '@nestjs/passport';
     UsersModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'superSecretKey', // Cambia esto por una variable de entorno en producción
-      signOptions: { expiresIn: '1d' },
+      secret: process.env.JWT_SECRET || 'superSecretKey',
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || '1d' },
     }),
   ],
   controllers: [LoginController],
